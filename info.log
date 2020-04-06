@@ -1,0 +1,22 @@
+{"message":"Unauthorized request to path: /favicon.ico","level":"error"}
+{"message":"Bookmarks with id 4 not found","level":"error"}
+{"message":"Unauthorized request to path: /bookmark","level":"error"}
+{"message":"Card with id 7519f8a8-ec5a-448d-bca1-872cd33b1057 created","level":"info"}
+{"message":"Bookmark with id a37c095b-6570-471f-924b-90f95f781a43 created","level":"info"}
+{"message":"Bookmark with id 955fc80f-2f60-4b3a-975e-7120266d63ad created","level":"info"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks/","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks/","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks/","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks/","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /","level":"error"}
+{"message":"Unauthorized request to path: /","level":"error"}
+{"message":"Unauthorized request to path: /","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Unauthorized request to path: /bookmarks","level":"error"}
+{"message":"Bookmark with id 1ef9793d-0453-4413-8085-3028c9ba32d7 created","level":"info"}
