@@ -3,15 +3,29 @@ const { v4: uuidv4 } = require('uuid')
 const { isWebUri } = require('valid-url')
 const logger = require('../logger')
 const store = require('../store')
+const BookmarksService = require('./BookmarksService')
 
 const bookmarksRouter = express.Router()
 const bodyParser = express.json() //e.j() must be applied to parse JSON data in body of request
 
+const serializeBookmark = bookmark => ({
+    id: bookmark.id, 
+    title: bookmark.title, 
+    url: bookmark.url, 
+    description: bookmark.description, 
+    rating: Number(bookmark.rating),
+})
+
 bookmarksRouter
     .route('/bookmarks')
     //returns array of bookmarks 
-    .get((req, res) => {
-        res.json(store.bookmarks)
+    .get((req, res, next) => {
+        //using BookmarksSerivce.getAllBookmarks to populate the response
+        BookmarksService.getAllBookmarks(req.app.get('db'))
+            .then(bookmarks => {
+                res.json(bookmarks.map(serializeBookmark))
+            })
+            .catch(next) //passing next into .catch from promise chain so any errors get handled by error handler middleware
     })
     .post(bodyParser, (req, res) => {
         for (const field of ['title', 'url', 'rating']) {
