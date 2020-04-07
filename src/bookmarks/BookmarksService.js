@@ -16,7 +16,7 @@ const BookmarksService = {
          .then(rows => {
              return rows[0]
          })
-    },
+    }, 
     // GETTING AN BOOKMARK BY ID 
     getById(knex, id) {
         return knex('bookmarks').select('*').where('id', id).first();

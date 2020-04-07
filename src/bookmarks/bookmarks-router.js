@@ -64,20 +64,20 @@ bookmarksRouter
     .route('/bookmarks/:bookmark_id')
     //handler that returns a single bookmark w. given ID
     //return 404 Not Found if ID isn't valid 
-    .get((req, res) => {
+    .get((req, res, next) => {
         const { bookmark_id } = req.params
 
-        const bookmark = store.bookmarks.find(c => c.id == bookmark_id)
-
-        //make sure we found a bookmark 
-        if (!bookmark) {
-            logger.error(`Bookmark with id ${bookmark_id} not found.`)
-            return res
-                .status(404)
-                .send('Bookmark Not Found')
-        }
-
-        res.json(bookmark)
+        BookmarksService.getById(req.app.get('db'), bookmark_id)
+            .then(bookmark => {
+                if (!bookmark) {
+                    logger.error(`Bookmark with id ${bookmark_id} not found`)
+                    return res.status(400).json({
+                        error: { message: `Bookmark Not Found`}
+                    })
+                }
+                res.json(serializeBookmark(bookmark))
+            })
+            .catch(next)
     })
     //delete a bookmark given it's id
     .delete((req, res) => {

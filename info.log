@@ -21,3 +21,23 @@
 {"message":"Unauthorized request to path: /bookmarks","level":"error"}
 {"message":"Bookmark with id 1ef9793d-0453-4413-8085-3028c9ba32d7 created","level":"info"}
 {"message":"next is not defined","level":"error"}
+{"message":"Bookmark with id :bookmark_id not found.","level":"error"}
+{"message":"select * from \"bookmarks\" where \"id\" = $1 limit $2 - invalid input syntax for type integer: \":bookmark_id\"","level":"error"}
+{"message":"select * from \"bookmarks\" where \"id\" = $1 limit $2 - invalid input syntax for type integer: \":bookmark_id\"","level":"error"}
+{"message":"select * from \"bookmarks\" where \"id\" = $1 limit $2 - invalid input syntax for type integer: \":bookmark_id\"","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 123 not found","level":"error"}
+{"message":"Bookmark with id 123 not found","level":"error"}
+{"message":"Bookmark with id 123 not found","level":"error"}
+{"message":"Bookmark with id 123 not found","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"knexInstance is not defined","level":"error"}
+{"message":"knexInstance is not defined","level":"error"}
+{"message":"knexInstance is not defined","level":"error"}
+{"message":"knexInstance is not defined","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
