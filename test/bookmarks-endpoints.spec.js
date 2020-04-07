@@ -70,7 +70,7 @@ describe.only('Bookmarks Endpoints', function() {
                     .get(`/bookmarks/${bookmarkId}`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(404, {
-                        error: { message: `Bookmark Not Found `}
+                        error: { message: `Bookmark Not Found`}
                     })
             })
         })
