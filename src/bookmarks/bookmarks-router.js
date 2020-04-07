@@ -4,15 +4,16 @@ const { isWebUri } = require('valid-url')
 const logger = require('../logger')
 const store = require('../store')
 const BookmarksService = require('./BookmarksService')
+const xss = require('xss')
 
 const bookmarksRouter = express.Router()
 const bodyParser = express.json() //can read the body & send JSON response w. any numeric ID value
 
 const serializeBookmark = bookmark => ({
     id: bookmark.id, 
-    title: bookmark.title, 
+    title: xss(bookmark.title), 
     url: bookmark.url, 
-    description: bookmark.description, 
+    description: xss(bookmark.description), 
     rating: Number(bookmark.rating),
 })
 

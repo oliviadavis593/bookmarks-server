@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const knex = require('knex')
 const app = require('../src/app')
-const { makeBookmarksArray } = require('./bookmarks.fixtures')
+const fixtures = require('./bookmarks.fixtures')
 
 describe('Bookmarks Endpoints', function() {
     //creating knex instance to connect to test db
@@ -40,7 +40,7 @@ describe('Bookmarks Endpoints', function() {
         //context that describes app in a state where the db has bookmarks
         //beforeEach() => in context to insert some testBookmarks 
         context('Given there are bookmarks in the databse', () => {
-            const testBookmarks = makeBookmarksArray()
+            const testBookmarks = fixtures.makeBookmarksArray()
 
             beforeEach('insert bookmarks', () => {
                 return db
@@ -60,6 +60,27 @@ describe('Bookmarks Endpoints', function() {
                     .expect(200, testBookmarks) 
             })
         })
+
+        context(`Given an XSS attack bookmark`, () => {
+            const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark()
+
+            beforeEach('insert malicious bookmark', () => {
+                return db
+                    .into('bookmarks')
+                    .insert([maliciousBookmark])
+            })
+
+            it('removes XSS attack content', () => {
+                return supertest(app)
+                    .get(`/bookmarks`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body[0].title).to.eql(expectedBookmark.title)
+                        expect(res.body[0].description).to.eql(expectedBookmark.description)
+                    })
+            })
+        })
     })
 
     describe(`GET /bookmarks/:bookmark_id`, () => {
@@ -76,7 +97,7 @@ describe('Bookmarks Endpoints', function() {
         })
 
         context('Given there are bookmarks in the database', () => {
-            const testBookmarks = makeBookmarksArray()
+            const testBookmarks = fixtures.makeBookmarksArray()
 
             beforeEach('insert bookmarks', () => {
                 return db
@@ -96,6 +117,49 @@ describe('Bookmarks Endpoints', function() {
                     .expect(200, expectedBookmark)
             })
         })
+
+        //ensure XSS sanitization takes place on GET /bookmarks/:bookmarks_id
+        context(`Given an XSS attack article`, () => {
+            const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark()
+
+            beforeEach('insert malicious article', () => {
+                return db
+                    .into('bookmarks')
+                    .insert([ maliciousBookmark ])
+            })
+
+            it('removes XSS attack content', () => {
+                return supertest(app)
+                    .get(`/bookmarks/${maliciousBookmark.id}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body.title).to.eql(expectedBookmark.title)
+                        expect(res.body.description).to.eql(expectedBookmark.description)
+                    })
+            })
+        })
+
+        context(`Given an XSS attack bookmark`, () => {
+            const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark()
+
+            beforeEach('insert malicious bookmark', () => {
+                return db
+                    .into('bookmarks')
+                    .insert([maliciousBookmark])
+            })
+
+            it('removes XSS attack content', () => {
+                return supertest(app)
+                    .get(`/bookmarks/${maliciousBookmark.id}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body.title).to.eql(expectedBookmark.title)
+                        expect(res.body.description).to.eql(expectedBookmark.description)
+                    })
+            })
+        })
     })
 
     /*POST /bookmarks */ 
@@ -104,7 +168,7 @@ describe('Bookmarks Endpoints', function() {
     //& response should have status 201 to indicate successful creation
     //should contain title, url, rating & description
     //id will be auto populate by server using column defaults 
-    describe.only(`POST /bookmarks`, () => {
+    describe(`POST /bookmarks`, () => {
         it(`creates a bookmark, responding with 201 and the new bookmark`, function() {
             const newBookmark =  {
                 title: 'Test new bookmark',
@@ -182,5 +246,21 @@ describe('Bookmarks Endpoints', function() {
                 })
         })
     })
+
+    it('removes XSS attack content from response', () => {
+        const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark()
+        return supertest(app)
+            .post(`/bookmarks`)
+            .send(maliciousBookmark)
+            .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+            .expect(201)
+            .expect(res => {
+                expect(res.body.title).to.eql(expectedBookmark.title)
+                expect(res.body.description).to.eql(expectedBookmark.description)
+            })
+
+    })
     
 })
+
+
