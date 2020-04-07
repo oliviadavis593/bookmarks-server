@@ -77,7 +77,7 @@ bookmarksRouter
     .route('/bookmarks/:bookmark_id')
     //handler that returns a single bookmark w. given ID
     //return 404 Not Found if ID isn't valid 
-    .get((req, res, next) => {
+    .all((req, res, next) => {
         const { bookmark_id } = req.params
 
         BookmarksService.getById(req.app.get('db'), bookmark_id)
@@ -88,29 +88,26 @@ bookmarksRouter
                         error: { message: 'Bookmark Not Found'}
                     })
                 }
-                res.json(serializeBookmark(bookmark))
+                res.bookmark = bookmark
+                next()
             })
             .catch(next)
     })
+    .get((req, res) => {
+        res.json(serializeBookmark(res.bookmark))
+    })
     //delete a bookmark given it's id
-    .delete((req, res) => {
-        const { bookmark_id } = req.params //peels param out of the request 
-
-        const bookmarkIndex = store.bookmarks.findIndex(b => b.id === bookmark_id)
-
-        if (bookmarkIndex === -1) {
-            logger.error(`Bookmarks with id ${bookmark_id} not found`)
-            return res
-                .status(404)
-                .send('Bookmark Not Found')
-        }
-
-        store.bookmarks.splice(bookmarkIndex, 1)
-
-        logger.info(`Bookmark with id ${bookmark_id} deleted`)
-        res
-            .status(204)
-            .end()
+    .delete((req, res, next) => {
+        const { bookmark_id } = req.params
+        BookmarksService.deleteBookmark(
+            req.app.get('db'),
+            bookmark_id
+        )
+            .then(numRowAffected => {
+                logger.info(`Bookmark with id ${bookmark_id} deleted`)
+                res.status(204).end()
+            })
+            .catch(next)
     })
 
 module.exports = bookmarksRouter
