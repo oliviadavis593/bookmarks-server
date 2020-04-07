@@ -245,20 +245,20 @@ describe('Bookmarks Endpoints', function() {
                     error: { message: `'rating' is required`}
                 })
         })
-    })
 
-    it('removes XSS attack content from response', () => {
-        const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark()
-        return supertest(app)
-            .post(`/bookmarks`)
-            .send(maliciousBookmark)
-            .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-            .expect(201)
-            .expect(res => {
-                expect(res.body.title).to.eql(expectedBookmark.title)
-                expect(res.body.description).to.eql(expectedBookmark.description)
-            })
-
+        it('removes XSS attack content from response', () => {
+            const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark()
+            return supertest(app)
+                .post(`/bookmarks`)
+                .send(maliciousBookmark)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(201)
+                .expect(res => {
+                    expect(res.body.title).to.eql(expectedBookmark.title)
+                    expect(res.body.description).to.eql(expectedBookmark.description)
+                })
+    
+        })
     })
     
 })

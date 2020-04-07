@@ -115,3 +115,9 @@
 {"message":"title is required","level":"error"}
 {"message":"url is required","level":"error"}
 {"message":"rating is required","level":"error"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"title is required","level":"error"}
+{"message":"url is required","level":"error"}
+{"message":"rating is required","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
