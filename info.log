@@ -45,3 +45,43 @@
 {"message":"Bookmark with id 123456 not found","level":"error"}
 {"message":"Bookmark with id 123456 not found","level":"error"}
 {"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id ec30a3c4-50ab-46c3-aee6-48814a143380 created","level":"info"}
+{"message":"Bookmark with id 9430f139-7adb-4b76-885c-151aecf2dbae created","level":"info"}
+{"message":"Bookmark with id 2f93c345-e869-42f1-9ae5-7463675b1a05 created","level":"info"}
+{"message":"next is not defined","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"next is not defined","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"next is not defined","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"next is not defined","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"next is not defined","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"next is not defined","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"next is not defined","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"Bookmark with id 123456 not found","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"title is required","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"title is required","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"title is required","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"title is required","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"title is required","level":"error"}
+{"message":"url is required","level":"error"}
+{"message":"rating is required","level":"error"}
+{"message":"Bookmark with id 1 created","level":"info"}
+{"message":"title is required","level":"error"}
+{"message":"url is required","level":"error"}
+{"message":"rating is required","level":"error"}

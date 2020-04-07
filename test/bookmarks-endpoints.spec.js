@@ -3,7 +3,7 @@ const knex = require('knex')
 const app = require('../src/app')
 const { makeBookmarksArray } = require('./bookmarks.fixtures')
 
-describe.only('Bookmarks Endpoints', function() {
+describe('Bookmarks Endpoints', function() {
     //creating knex instance to connect to test db
     //& clearing any data so we know we have clean tables 
     let db
@@ -95,6 +95,91 @@ describe.only('Bookmarks Endpoints', function() {
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(200, expectedBookmark)
             })
+        })
+    })
+
+    /*POST /bookmarks */ 
+
+    //If post request has valid => bookmark should be inserted into db 
+    //& response should have status 201 to indicate successful creation
+    //should contain title, url, rating & description
+    //id will be auto populate by server using column defaults 
+    describe.only(`POST /bookmarks`, () => {
+        it(`creates a bookmark, responding with 201 and the new bookmark`, function() {
+            const newBookmark =  {
+                title: 'Test new bookmark',
+                url: 'https://testing.com',
+                description: 'test description',
+                rating: 3,
+            }
+            return supertest(app)
+                .post(`/bookmarks`)
+                .send(newBookmark)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(201)
+                .expect(res => {
+                    expect(res.body.title).to.eql(newBookmark.title)
+                    expect(res.body.url).to.eql(newBookmark.url)
+                    expect(res.body.description).to.eql(newBookmark.description)
+                    expect(res.body.rating).to.eql(newBookmark.rating)
+                    expect(res.body).to.have.property('id')
+                    expect(res.headers.location).to.eql(`/bookmarks/${res.body.id}`)
+                })
+                .then(res => 
+                    supertest(app)
+                        .get(`/bookmarks/${res.body.id}`)
+                        .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                        .expect(res.body)    
+                )
+        })
+
+        /* POST validation  */
+        //testing when body of POST /bookmarks doesn't contain required info (title, url, rating)
+        //when they're missing => response should be 400 status 
+        //w. JSON body containing appropriate message 
+        it(`responds with 400 and an error message when 'title' is missing`, () => {
+            const bookmarkMissingTitle = {
+                //title: 'test-title',
+                url: 'https://testing.com',
+                rating: 2
+            }
+            return supertest(app)
+                .post(`/bookmarks`)
+                .send(bookmarkMissingTitle)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(400, {
+                    error: { message: `'title' is required`}
+                })
+        })
+
+        it(`responds with 400 and an error when 'url' is missing`, () => {
+            const bookmarkMissingUrl = {
+                title: 'test-title',
+                //url: 'https://testing.com,
+                rating: 4,
+            }
+            return supertest(app)
+                .post(`/bookmarks`)
+                .send(bookmarkMissingUrl)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(400, {
+                    error: { message: `'url' is required`}
+                })
+        })
+
+        it(`responds with 400 and an error when 'rating' is missing`, () => {
+            const bookmarkMissingRating = {
+                title: 'test-title',
+                url: 'https://testing.com',
+                //rating: 5
+            }
+            return supertest(app)
+                .post(`/bookmarks`)
+                .send(bookmarkMissingRating)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(400, {
+                    error: { message: `'rating' is required`}
+                })
         })
     })
     

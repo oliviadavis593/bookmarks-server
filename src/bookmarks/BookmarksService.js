@@ -7,7 +7,7 @@ const BookmarksService = {
         return knex.select('*').from('bookmarks')
     },
     //creating a method & having it return a promise => ADDING BOOKMARKS
-    insertBookmarks(knex, newBookmark) {
+    insertBookmark(knex, newBookmark) {
         //return Promise.resolve({})
      return knex
          .insert(newBookmark)

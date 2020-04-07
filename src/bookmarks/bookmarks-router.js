@@ -6,7 +6,7 @@ const store = require('../store')
 const BookmarksService = require('./BookmarksService')
 
 const bookmarksRouter = express.Router()
-const bodyParser = express.json() //e.j() must be applied to parse JSON data in body of request
+const bodyParser = express.json() //can read the body & send JSON response w. any numeric ID value
 
 const serializeBookmark = bookmark => ({
     id: bookmark.id, 
@@ -27,37 +27,49 @@ bookmarksRouter
             })
             .catch(next) //passing next into .catch from promise chain so any errors get handled by error handler middleware
     })
-    .post(bodyParser, (req, res) => {
+    .post(bodyParser, (req, res, next) => {
+        //refactored way to validate required information
         for (const field of ['title', 'url', 'rating']) {
             if (!req.body[field]) {
                 logger.error(`${field} is required`)
-                return res.status(400).send(`'${field}' is required`)
+                return res.status(400).send({
+                    error: { message: `'${field}' is required`}
+                })
             }
         }
         const { title, url, description, rating } = req.body //get data from the body 
 
+        const ratingNum = Number(rating)
+
         /*once you get data from body => validate that these exist */
-        if (!Number.isInteger(rating) || rating < 0 || rating > 5) {
+        if (!Number.isInteger(ratingNum) || ratingNum < 0 || ratingNum > 5) {
             logger.error(`Invalid rating '${rating}' supplied`)
             return res.status(400).send(`'rating' must be a number between 0 and 5`)
         }
 
         if (!isWebUri(url)) {
             logger.error(`Invalid url '${url}' supplied`)
-            return res.status(400).send(`'url' must be a valid URL`)
+            return res.status(400).send({
+                error: { message: `'url' must be a valid URL`}
+            })
         }
 
-        //if they do exist => generate an ID & push bookmark card object into array
-        const bookmark = { id: uuidv4(), title, url, description, rating}
+        const newBookmark = { title, url, rating, description }
 
-        store.bookmarks.push(bookmark)
+        BookmarksService.insertBookmark(
+            req.app.get('db'),
+            newBookmark 
+        )
+            .then(bookmark => {
+                //log bookmark creation & send response including location header 
+                logger.info(`Bookmark with id ${bookmark.id} created`)
+                res
+                    .status(201)
+                    .location(`/bookmarks/${bookmark.id}`) //location header for new article
+                    .json(serializeBookmark(bookmark))
+            })
+            .catch(next)
 
-        //log bookmark creation & send response including location header 
-        logger.info(`Bookmark with id ${bookmark.id} created`)
-        res
-            .status(201)
-            .location(`http://localhost:8000/bookmarks/${bookmark.id}`)
-            .json(bookmark)
     })
 
 bookmarksRouter
