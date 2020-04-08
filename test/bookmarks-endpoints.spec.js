@@ -38,13 +38,13 @@ describe('Bookmarks Endpoints', function() {
 
         it(`responds with 401 unauthorized for GET /bookmarks`, () => {
             return supertest(app)
-                .get('/bookmarks')
+                .get('/api/bookmarks')
                 .expect(401, { error: 'Unauthorized request'})
         })
 
         it(`responds with 401 Unauthorized POST /bookmarks`, () => {
             return supertest(app)
-                .post('/bookmarks')
+                .post('/api/bookmarks')
                 .send({ title: 'test-title', url: 'http://some.thing.com', rating: 1})
                 .expect(401, { error: 'Unauthorized request' })
         })
@@ -52,23 +52,23 @@ describe('Bookmarks Endpoints', function() {
         it(`responds with 401 Unauthorized GET /bookmarks/:bookmark_id`, () => {
             const secondBookmark = testBookmarks[1]
             return supertest(app)
-                .get(`/bookmarks/${secondBookmark.id}`)
+                .get(`/api/bookmarks/${secondBookmark.id}`)
                 .expect(401, { error: 'Unauthorized request' })
         })
 
         it(`responds with 401 Unauthorized for DELETE /bookmarks/:bookmark_id`, () => {
             const aBookmark = testBookmarks[1]
             return supertest(app)
-                .delete(`/bookmarks/${aBookmark.id}`)
+                .delete(`/api/bookmarks/${aBookmark.id}`)
                 .expect(401, { error: 'Unauthorized request'})
         })
     })
 
-    describe(`GET /bookmarks`, () => {
+    describe(`GET /api/bookmarks`, () => {
         context(`Given no bookmarks`, () => {
             it(`responds with 200 and an empty list`, () => {
                 return supertest(app)
-                    .get('/bookmarks')
+                    .get('/api/bookmarks')
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(200, [])
             })
@@ -91,7 +91,7 @@ describe('Bookmarks Endpoints', function() {
             //GET /bookmarks => should respond w. all the bookmarks in the db
             it('GET /bookmarks responds with 200 and all of the bookmarks', () => {
                 return supertest(app)
-                    .get('/bookmarks')
+                    .get('/api/bookmarks')
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`) //gets rid of 401 Unauthorized test fail
                     //2nd arg of expect => response body that we expect
                     .expect(200, testBookmarks) 
@@ -109,7 +109,7 @@ describe('Bookmarks Endpoints', function() {
 
             it('removes XSS attack content', () => {
                 return supertest(app)
-                    .get(`/bookmarks`)
+                    .get(`/api/bookmarks`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(200)
                     .expect(res => {
@@ -120,12 +120,12 @@ describe('Bookmarks Endpoints', function() {
         })
     })
 
-    describe(`GET /bookmarks/:bookmark_id`, () => {
+    describe(`GET /api/bookmarks/:bookmark_id`, () => {
         context(`Given no bookmarks`, () => {
             it(`responds with 404`, () => {
                 const bookmarkId = 123456
                 return supertest(app)
-                    .get(`/bookmarks/${bookmarkId}`)
+                    .get(`/api/bookmarks/${bookmarkId}`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(404, {
                         error: { message: `Bookmark Not Found`}
@@ -149,7 +149,7 @@ describe('Bookmarks Endpoints', function() {
                 const bookmarkId = 2
                 const expectedBookmark = testBookmarks[bookmarkId - 1]
                 return supertest(app)
-                    .get(`/bookmarks/${bookmarkId}`)
+                    .get(`/api/bookmarks/${bookmarkId}`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(200, expectedBookmark)
             })
@@ -167,7 +167,7 @@ describe('Bookmarks Endpoints', function() {
 
             it('removes XSS attack content', () => {
                 return supertest(app)
-                    .get(`/bookmarks/${maliciousBookmark.id}`)
+                    .get(`/api/bookmarks/${maliciousBookmark.id}`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(200)
                     .expect(res => {
@@ -188,7 +188,7 @@ describe('Bookmarks Endpoints', function() {
 
             it('removes XSS attack content', () => {
                 return supertest(app)
-                    .get(`/bookmarks/${maliciousBookmark.id}`)
+                    .get(`/api/bookmarks/${maliciousBookmark.id}`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(200)
                     .expect(res => {
@@ -205,7 +205,7 @@ describe('Bookmarks Endpoints', function() {
     //& response should have status 201 to indicate successful creation
     //should contain title, url, rating & description
     //id will be auto populate by server using column defaults 
-    describe(`POST /bookmarks`, () => {
+    describe(`POST /api/bookmarks`, () => {
         it(`creates a bookmark, responding with 201 and the new bookmark`, function() {
             const newBookmark =  {
                 title: 'Test new bookmark',
@@ -214,7 +214,7 @@ describe('Bookmarks Endpoints', function() {
                 rating: 3,
             }
             return supertest(app)
-                .post(`/bookmarks`)
+                .post(`/api/bookmarks`)
                 .send(newBookmark)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(201)
@@ -224,11 +224,11 @@ describe('Bookmarks Endpoints', function() {
                     expect(res.body.description).to.eql(newBookmark.description)
                     expect(res.body.rating).to.eql(newBookmark.rating)
                     expect(res.body).to.have.property('id')
-                    expect(res.headers.location).to.eql(`/bookmarks/${res.body.id}`)
+                    expect(res.headers.location).to.eql(`/api/bookmarks/${res.body.id}`)
                 })
                 .then(res => 
                     supertest(app)
-                        .get(`/bookmarks/${res.body.id}`)
+                        .get(`/api/bookmarks/${res.body.id}`)
                         .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                         .expect(res.body)    
                 )
@@ -245,7 +245,7 @@ describe('Bookmarks Endpoints', function() {
                 rating: 2
             }
             return supertest(app)
-                .post(`/bookmarks`)
+                .post(`/api/bookmarks`)
                 .send(bookmarkMissingTitle)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(400, {
@@ -260,7 +260,7 @@ describe('Bookmarks Endpoints', function() {
                 rating: 4,
             }
             return supertest(app)
-                .post(`/bookmarks`)
+                .post(`/api/bookmarks`)
                 .send(bookmarkMissingUrl)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(400, {
@@ -275,7 +275,7 @@ describe('Bookmarks Endpoints', function() {
                 //rating: 5
             }
             return supertest(app)
-                .post(`/bookmarks`)
+                .post(`/api/bookmarks`)
                 .send(bookmarkMissingRating)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(400, {
@@ -286,7 +286,7 @@ describe('Bookmarks Endpoints', function() {
         it('removes XSS attack content from response', () => {
             const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark()
             return supertest(app)
-                .post(`/bookmarks`)
+                .post(`/api/bookmarks`)
                 .send(maliciousBookmark)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(201)
@@ -298,11 +298,11 @@ describe('Bookmarks Endpoints', function() {
         })
     })
 
-    describe(`DELETE /bookmarks/:bookmark_id`, () => {
+    describe(`DELETE /api/bookmarks/:bookmark_id`, () => {
         context(`Given no bookmarks`, () => {
             it(`responds 404 when bookmarks doesn't exist`, () => {
                 return supertest(app)
-                    .delete(`/bookmarks/123`)
+                    .delete(`/api/bookmarks/123`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(404, {
                         error: { message: `Bookmark Not Found`}
@@ -323,12 +323,12 @@ describe('Bookmarks Endpoints', function() {
                 const idToRemove = 2
                 const expectedBookmarks = testBookmarks.filter(bm => bm.id !== idToRemove)
                 return supertest(app)
-                    .delete(`/bookmarks/${idToRemove}`)
+                    .delete(`/api/bookmarks/${idToRemove}`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                     .expect(204)
                     .then(() =>
                         supertest(app)
-                            .get(`/bookmarks`)
+                            .get(`/api/bookmarks`)
                             .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                             .expect(expectedBookmarks)
                     )

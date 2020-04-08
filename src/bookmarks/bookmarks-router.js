@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 const { v4: uuidv4 } = require('uuid')
 const { isWebUri } = require('valid-url')
@@ -18,7 +19,8 @@ const serializeBookmark = bookmark => ({
 })
 
 bookmarksRouter
-    .route('/bookmarks')
+    .route('/')
+
     //returns array of bookmarks 
     .get((req, res, next) => {
         //using BookmarksSerivce.getAllBookmarks to populate the response
@@ -66,7 +68,7 @@ bookmarksRouter
                 logger.info(`Bookmark with id ${bookmark.id} created`)
                 res
                     .status(201)
-                    .location(`/bookmarks/${bookmark.id}`) //location header for new article
+                    .location(path.posix.join(req.originalUrl, `${bookmark.id}`)) //location header for new article
                     .json(serializeBookmark(bookmark))
             })
             .catch(next)
@@ -74,7 +76,7 @@ bookmarksRouter
     })
 
 bookmarksRouter
-    .route('/bookmarks/:bookmark_id')
+    .route('/:bookmark_id')
     //handler that returns a single bookmark w. given ID
     //return 404 Not Found if ID isn't valid 
     .all((req, res, next) => {
