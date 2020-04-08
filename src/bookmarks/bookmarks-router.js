@@ -6,6 +6,7 @@ const logger = require('../logger')
 const store = require('../store')
 const BookmarksService = require('./BookmarksService')
 const xss = require('xss')
+const { getBookmarkValidationError } = require('./bookmark-validator')
 
 const bookmarksRouter = express.Router()
 const bodyParser = express.json() //can read the body & send JSON response w. any numeric ID value
@@ -59,6 +60,10 @@ bookmarksRouter
 
         const newBookmark = { title, url, rating, description }
 
+        const error = getBookmarkValidationError(newBookmark)
+
+        if (error) return res.status(400).send(error)
+
         BookmarksService.insertBookmark(
             req.app.get('db'),
             newBookmark 
@@ -107,6 +112,32 @@ bookmarksRouter
         )
             .then(numRowAffected => {
                 logger.info(`Bookmark with id ${bookmark_id} deleted`)
+                res.status(204).end()
+            })
+            .catch(next)
+    })
+    .patch(bodyParser, (req, res, next) => {
+        const { title, url, description, rating} = req.body
+        const bookmarkToUpdate = { title, url, description, rating }
+
+        const numberOfValues = Object.values(bookmarkToUpdate).filter(Boolean).length
+        if (numberOfValues === 0) {
+            logger.error(`Invalid update without required fields`)
+            return res.status(400).json({
+                error: { message: `Request body must contain either 'title', 'url', 'description' or 'rating'`}
+            })
+        }
+
+        const error = getBookmarkValidationError(bookmarkToUpdate)
+
+        if (error) return res.status(400).send(error)
+
+        BookmarksService.updateBookmark(
+            req.app.get('db'),
+            req.params.bookmark_id,
+            bookmarkToUpdate
+        )
+            .then(numRowAffected => {
                 res.status(204).end()
             })
             .catch(next)
